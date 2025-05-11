@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dowry Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label, .section {
+            display: block;
+            margin: 10px 0;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Dowry Calculator</h1>
+    <form id="dowryForm">
+        <label for="education">Education:</label>
+        <select id="education">
+            <option value="1.5">Undergraduate</option>
+            <option value="1.2">College</option>
+            <option value="1.05">High School</option>
+            <option value="0.9">Middle School</option>
+        </select>
+
+        <label for="netWorth">Family Net Worth:</label>
+        <select id="netWorth">
+            <option value="2">Over $10,000</option>
+            <option value="1.5">Between $5,000–$10,000</option>
+            <option value="1.2">Less than $5,000</option>
+        </select>
+
+        <label for="caste">Caste:</label>
+        <select id="caste">
+            <option value="100">Brahmin</option>
+            <option value="50">Kshatriya</option>
+            <option value="20">Vaishya</option>
+            <option value="10">Shudra</option>
+            <option value="-50">Untouchable</option>
+        </select>
+
+        <div class="section">
+            <p>Skills:</p>
+            <label><input type="checkbox" class="skill" value="10"> Musical Instrument</label>
+            <label><input type="checkbox" class="skill" value="20"> Good Cook</label>
+            <label><input type="checkbox" class="skill" value="15"> Easygoing</label>
+            <label><input type="checkbox" class="skill" value="10"> Singing</label>
+        </div>
+
+        <div class="section">
+            <p>Age:</p>
+            <label><input type="radio" name="age" value="1.5" checked> 18–23</label>
+            <label><input type="radio" name="age" value="1.2"> 24–27</label>
+            <label><input type="radio" name="age" value="0.95"> 28+</label>
+        </div>
+
+        <div class="section">
+            <p>Reputation:</p>
+            <label><input type="checkbox" class="reputation" value="0.85"> Gossips about parents</label>
+            <label><input type="checkbox" class="reputation" value="0.9"> Gossips about character</label>
+            <label><input type="checkbox" class="reputation" value="-20"> General gossips</label>
+        </div>
+
+        <button type="button" id="calcBtn">Calculate Price</button>
+    </form>
+
+    <h2 id="result">Dowry Price: $100</h2>
+</div>
+
+<script>
+    document.getElementById("calcBtn").addEventListener("click", function () {
+        let basePrice = 100;
+
+        const education = parseFloat(document.getElementById("education").value);
+        const netWorth = parseFloat(document.getElementById("netWorth").value);
+        const caste = parseFloat(document.getElementById("caste").value);
+        const age = parseFloat(document.querySelector('input[name="age"]:checked').value);
+
+        let skillSum = 0;
+        document.querySelectorAll(".skill:checked").forEach(el => {
+            skillSum += parseFloat(el.value);
+        });
+
+        let reputationMultiplier = 1;
+        let gossipPenalty = 0;
+
+        document.querySelectorAll(".reputation:checked").forEach(rep => {
+            const val = parseFloat(rep.value);
+            if (val < 1 && val > 0) {
+                reputationMultiplier *= val;
+            } else {
+                gossipPenalty += val;
+            }
+        });
+
+        let finalPrice = basePrice;
+        finalPrice *= education;
+        finalPrice *= netWorth;
+        finalPrice += caste;
+        finalPrice += skillSum;
+        finalPrice *= age;
+        finalPrice *= reputationMultiplier;
+        finalPrice += gossipPenalty;
+
+        const result = document.getElementById("result");
+        result.textContent = `Dowry Price: $${finalPrice.toFixed(2)}`;
+
+        if (finalPrice < 100) {
+            result.style.color = "red";
+        } else if (finalPrice > 250) {
+            result.style.color = "green";
+        } else {
+            result.style.color = "black";
+        }
+    });
+</script>
+</body>
+</html>
